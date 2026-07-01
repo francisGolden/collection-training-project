@@ -29,14 +29,6 @@ public class ShelterAnalyticsService {
                 .toList();
 
 
-        // TODO Step 2:
-        // Fill all collections:
-        // - allAnimals (already available from import)
-        // - uniqueSpecies
-        // - animalsBySpecies
-        // - animalsNeedingVetInput with format name(species)
-
-
 
         // TODO Step 3:
         // Add necessary fields to ShelterReportData
