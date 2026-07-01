@@ -11,9 +11,18 @@ public class ShelterAnalyticsService {
 
     public ShelterReportData buildReportData(ImportResult importResult) {
         List<Animal> allAnimals = importResult.allAnimals();
-        Set<String> uniqueSpecies = allAnimals.stream().map(animal -> animal.getSpecies()).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> uniqueSpecies =
+                allAnimals
+                        .stream()
+                        .map(animal -> animal.getSpecies())
+                        .collect(Collectors.toCollection(TreeSet::new)
+        );
 
         Map<String, List<Animal>> animalsBySpecies = new HashMap<>();
+        for (String uniqueSpec: uniqueSpecies){
+            animalsBySpecies.put(uniqueSpec, allAnimals.stream().filter(animal -> animal.getSpecies().equals(uniqueSpec)).toList());
+        }
+
         List<String> animalsNeedingVetInput = new ArrayList<>();
 
         // TODO Step 2:

@@ -55,7 +55,7 @@ public class CsvImportService {
                     return;
                 }
 
-                boolean adopted = Boolean.parseBoolean(parts[3]);
+                boolean vaccinated = Boolean.parseBoolean(parts[3]);
 
                 String dateString = parts[4];
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -69,7 +69,7 @@ public class CsvImportService {
                     return;
                 }
 
-                allAnimals.add(new Animal(name, animal, age, adopted, intakeDate));
+                allAnimals.add(new Animal(name, animal, age, vaccinated, intakeDate));
             });
         } catch (Exception e) {
             log.error(e.getMessage());
