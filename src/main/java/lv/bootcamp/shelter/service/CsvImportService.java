@@ -26,6 +26,10 @@ public class CsvImportService {
         // TODO Step 1:
         // 1) Read intake.csv with UTF-8.
         // 2) Skip header row.
+        // 3) Skip malformed rows and log warnings.
+        // 4) Allow blank age as unknown (null), but reject non-numeric age values.
+        // 5) Parse intakeDate using DateTimeFormatter.
+        // 6) Map each row to Animal object.
         try (Stream<String> lines = Files.lines(inputPath, StandardCharsets.UTF_8)) {
             lines.skip(1).forEach(line -> {
                 String[] parts = line.split(",");
@@ -71,10 +75,6 @@ public class CsvImportService {
             log.error(e.getMessage());
         }
 
-        // 3) Skip malformed rows and log warnings.
-        // 4) Allow blank age as unknown (null), but reject non-numeric age values.
-        // 5) Parse intakeDate using DateTimeFormatter.
-        // 6) Map each row to Animal object.
 
         return new ImportResult(allAnimals, 0);
     }

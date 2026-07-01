@@ -5,13 +5,14 @@ import lv.bootcamp.shelter.service.data.ImportResult;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShelterAnalyticsService {
 
     public ShelterReportData buildReportData(ImportResult importResult) {
         List<Animal> allAnimals = importResult.allAnimals();
+        Set<String> uniqueSpecies = allAnimals.stream().map(animal -> animal.getSpecies()).collect(Collectors.toCollection(TreeSet::new));
 
-        Set<String> uniqueSpecies = new TreeSet<>();
         Map<String, List<Animal>> animalsBySpecies = new HashMap<>();
         List<String> animalsNeedingVetInput = new ArrayList<>();
 
@@ -21,6 +22,8 @@ public class ShelterAnalyticsService {
         // - uniqueSpecies
         // - animalsBySpecies
         // - animalsNeedingVetInput with format name(species)
+
+
 
         // TODO Step 3:
         // Add necessary fields to ShelterReportData
