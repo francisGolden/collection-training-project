@@ -17,25 +17,28 @@ import java.time.Month;
 
 @Slf4j
 public class CsvImportService {
+    private int skippedRows = 0;
 
     public ImportResult importAnimals(Path inputPath) {
         log.info("Starting import from {}", inputPath);
 
         List<Animal> allAnimals = new ArrayList<>();
-        
+
         try (Stream<String> lines = Files.lines(inputPath, StandardCharsets.UTF_8)) {
             lines.skip(1).forEach(line -> {
                 String[] parts = line.split(",");
 
                 String name = parts[0];
                 if (name.trim().isEmpty()){
-                    log.warn("Skipping string because no name was provided");
+                    log.warn("Skipping row because no name was provided");
+                    skippedRows++;
                     return;
                 }
 
                 String animal = parts[1];
                 if (animal.trim().isEmpty()){
-                    log.warn("Skipping string because no animal species was provided");
+                    log.warn("Skipping row because no animal species was provided");
+                    skippedRows++;
                     return;
                 }
 
@@ -45,6 +48,7 @@ public class CsvImportService {
                     age = ageString.isEmpty() ? null : Integer.parseInt(ageString);
                 } catch (NumberFormatException e){
                     log.warn("Catching NumberFormatException: [{}] and skipping row.", e.getMessage());
+                    skippedRows++;
                     return;
                 }
 
@@ -59,6 +63,7 @@ public class CsvImportService {
                     intakeDate = LocalDate.parse(dateString, formatter);
                 } catch (DateTimeParseException e) {
                     log.error("Invalid date. {}", e.getMessage());
+                    skippedRows++;
                     return;
                 }
 
@@ -69,6 +74,6 @@ public class CsvImportService {
         }
 
 
-        return new ImportResult(allAnimals, 0);
+        return new ImportResult(allAnimals, skippedRows);
     }
 }

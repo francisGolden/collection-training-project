@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShelterAnalyticsService {
-
     public ShelterReportData buildReportData(ImportResult importResult) {
         List<Animal> allAnimals = importResult.allAnimals();
         Set<String> uniqueSpecies =
