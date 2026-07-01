@@ -14,16 +14,20 @@ public class ShelterAnalyticsService {
         Set<String> uniqueSpecies =
                 allAnimals
                         .stream()
-                        .map(animal -> animal.getSpecies())
+                        .map(Animal::getSpecies)
                         .collect(Collectors.toCollection(TreeSet::new)
         );
 
-        Map<String, List<Animal>> animalsBySpecies = new HashMap<>();
-        for (String uniqueSpec: uniqueSpecies){
-            animalsBySpecies.put(uniqueSpec, allAnimals.stream().filter(animal -> animal.getSpecies().equals(uniqueSpec)).toList());
-        }
+        Map<String, List<Animal>> animalsBySpecies = allAnimals
+                .stream()
+                .collect(Collectors.groupingBy(Animal::getSpecies));
 
-        List<String> animalsNeedingVetInput = new ArrayList<>();
+        List<String> animalsNeedingVetInput = allAnimals
+                .stream().
+                filter(animal -> !animal.isVaccinated()).
+                map(animal -> animal.getName()+"("+animal.getSpecies()+")")
+                .toList();
+
 
         // TODO Step 2:
         // Fill all collections:
