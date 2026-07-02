@@ -5,29 +5,53 @@ import lv.bootcamp.shelter.service.data.ImportResult;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShelterAnalyticsService {
-
     public ShelterReportData buildReportData(ImportResult importResult) {
         List<Animal> allAnimals = importResult.allAnimals();
 
-        Set<String> uniqueSpecies = new TreeSet<>();
-        Map<String, List<Animal>> animalsBySpecies = new HashMap<>();
-        List<String> animalsNeedingVetInput = new ArrayList<>();
+        Set<String> uniqueSpecies =
+                allAnimals
+                        .stream()
+                        .map(Animal::getSpecies)
+                        .collect(Collectors.toCollection(TreeSet::new)
+        );
 
-        // TODO Step 2:
-        // Fill all collections:
-        // - allAnimals (already available from import)
-        // - uniqueSpecies
-        // - animalsBySpecies
-        // - animalsNeedingVetInput with format name(species)
+        Map<String, List<Animal>> animalsBySpecies = allAnimals
+                .stream()
+                .collect(Collectors.groupingBy(Animal::getSpecies));
 
-        // TODO Step 3:
-        // Add necessary fields to ShelterReportData
-        // Use stream pipelines for:
-        // - vaccinated vs unvaccinated counts per species
-        // - oldest animal per species (excluding unknown ages)
+        List<String> animalsNeedingVetInput = allAnimals
+                .stream().
+                filter(animal -> !animal.isVaccinated()).
+                map(animal -> animal.getName()+"("+animal.getSpecies()+")")
+                .toList();
 
-        return new ShelterReportData(importResult);
+        Map<String, String> oldestAnimalPerSpecies = allAnimals.stream()
+                .filter(animal -> animal.getAge() != null)
+                .collect(Collectors.groupingBy(
+                        Animal::getSpecies,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparingInt(Animal::getAge)),
+                                opt -> opt.get().getName()
+                        )
+                ));
+
+        Map<String, Map<Boolean, Long>> vaccinationStatusPerSpecies = allAnimals.stream()
+                .collect(Collectors.groupingBy(
+                        Animal::getSpecies,
+                        Collectors.partitioningBy(
+                                Animal::isVaccinated,
+                                Collectors.counting()
+                        )
+                ));
+
+        return new ShelterReportData(importResult,
+                uniqueSpecies,
+                animalsBySpecies,
+                animalsNeedingVetInput,
+                vaccinationStatusPerSpecies,
+                oldestAnimalPerSpecies);
     }
 }
