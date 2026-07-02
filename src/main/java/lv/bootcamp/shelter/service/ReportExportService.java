@@ -1,5 +1,5 @@
 package lv.bootcamp.shelter.service;
-
+import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 
 import java.io.IOException;
@@ -14,20 +14,21 @@ import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+@Slf4j
 public class ReportExportService {
 
     public void writeReport(Path outputPath, ShelterReportData reportData) {
         try {
             if (!Files.exists(outputPath)) {
                 Files.createFile(outputPath);
-                System.out.println("Empty file created successfully!");
+                log.info("Empty file created successfully!");
             } else {
-                System.out.println("File already exists.");
+                log.info("File already exists.");
             }
         } catch (FileAlreadyExistsException e) {
-            System.err.println("File already exists: " + e.getMessage());
+            log.error("File already exists. Message: {}", e.getMessage());
         } catch (IOException e) {
-            System.err.println("IO Exception " + e.getMessage());
+            log.error("IO Exception: {}", e.getMessage());
         }
 
         List<String> totalsPerSpecies = new ArrayList<>();
@@ -70,7 +71,7 @@ public class ReportExportService {
                 writer.write(line);
                 writer.newLine(); }
         } catch (IOException e) {
-            System.out.println("error writing string " + e.getMessage());
+            log.error("Error writing string. Message: {}", e.getMessage());
         }
     }
 }
